@@ -8,16 +8,28 @@ import {
 	TouchableOpacity,
     Appearance
 } from 'react-native';
-import { useAuth } from '../context/AuthContext';
+import "../firebaseConfig";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const Page = () => {
 	const [username, setUsername] = useState('admin');
 	const [password, setPassword] = useState('admin');
-	const { onLogin } = useAuth();
+	const auth = getAuth();
 
-	const onSignInPress = async () => {
-		onLogin!(username, password);
-	};
+	const login = () => {
+		signInWithEmailAndPassword(auth, username, password)
+		  .then(async (userCredential) => {
+			// Signed in
+			const user = userCredential.user;
+			alert('credenciales correctas!');
+			console.log(user.email);
+		  })
+		  .catch((error) => {
+			alert('Error!');
+			const errorCode = error.code;
+			const errorMessage = error.message;
+		  });
+	  };
 
 	return (
 		<KeyboardAvoidingView
@@ -40,7 +52,7 @@ const Page = () => {
 				style={styles.inputField}
 			/>
 
-			<TouchableOpacity onPress={onSignInPress} style={styles.button}>
+			<TouchableOpacity onPress={() => login()} style={styles.button}>
 				<Text style={{ color: '#fff' }}>Sign in</Text>
 			</TouchableOpacity>
 		</KeyboardAvoidingView>
@@ -58,7 +70,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		padding: 20,
 		paddingHorizontal: '20%',
-		justifyContent: 'center'
+		justifyContent: 'center',
+		backgroundColor: '#000000'
 	},
 	header: {
         color: fontColor,
