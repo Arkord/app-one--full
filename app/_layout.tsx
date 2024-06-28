@@ -32,7 +32,7 @@ const RootLayout = () => {
     console.log('group--- ', inAuthGroup);
 
 		if (!authState?.authenticated && inAuthGroup) {
-			router.replace('/login');
+			router.replace('/registro');
 		} else if (authState?.authenticated === true) {
 			router.replace('/(tabs)');
 		}
@@ -44,15 +44,28 @@ const RootLayout = () => {
   //   return <Slot />;
   // }
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack initialRouteName='login'>
-        <Stack.Screen name="login"   options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </ThemeProvider>
-  );
+  if(authState?.authenticated) {
+    return (
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack initialRouteName='registro'>
+          <Stack.Screen name="login"   options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+      </ThemeProvider>
+    );
+  }
+  else {
+    return (
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack initialRouteName='registro'>
+          <Stack.Screen name="login"   options={{ headerShown: false }} />
+          <Stack.Screen name="registro"   options={{ headerShown: false }} />
+        </Stack>
+      </ThemeProvider>
+    );
+  }
+  
 }
 
 const RootLayoutNav = () => {

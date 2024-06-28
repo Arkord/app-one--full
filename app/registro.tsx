@@ -9,30 +9,44 @@ import {
     Appearance
 } from 'react-native';
 import "../firebaseConfig";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword  } from "firebase/auth";
 import { useAuth } from '@/context/AuthContext';
+import { router } from 'expo-router';
 
 const Registro = () => {
-	const [username, setUsername] = useState('admin');
-	const [password, setPassword] = useState('admin');
+	const [username, setUsername] = useState('');
+	const [password, setPassword] = useState('');
 	const auth = getAuth();
 
 	const { onLogin } = useAuth();
 
-	const onSignInPress = async () => {
-		onLogin!(username, password);
+	const registrarse = async () => {
+		const auth = getAuth();
+		
+		createUserWithEmailAndPassword(auth, username, password)
+			.then((userCredential) => {
+				const user = userCredential.user;
+				alert("El usuario se ha creado correctamente!");
+				router.replace('/login');
+			})
+			.catch((error) => {
+				const errorCode = error.code;
+				const errorMessage = error.message;
+
+				alert(errorMessage);
+			});
+		
 	};
 
-	
 	return (
 		<KeyboardAvoidingView
 			behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
 			style={styles.container}
 		>
-			<Text style={styles.header}>Login</Text>
+			<Text style={styles.header}>Pantalla de registro</Text>
 			<TextInput
 				autoCapitalize="none"
-				placeholder="admin"
+				placeholder="email"
 				value={username}
 				onChangeText={setUsername}
 				style={styles.inputField}
@@ -45,11 +59,9 @@ const Registro = () => {
 				style={styles.inputField}
 			/>
 
-			<TouchableOpacity onPress={() => onSignInPress()} style={styles.button}>
-				<Text style={{ color: '#fff' }}>Sign in</Text>
+			<TouchableOpacity onPress={() => registrarse()} style={styles.button}>
+				<Text style={{ color: '#fff' }}>Registrarse</Text>
 			</TouchableOpacity>
-
-			
 
 		</KeyboardAvoidingView>
 	);

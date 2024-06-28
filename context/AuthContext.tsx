@@ -1,3 +1,4 @@
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { createContext, useContext, useState } from 'react';
 
 export enum Role {
@@ -29,21 +30,44 @@ export const AuthProvider = ({ children }: any) => {
 	});
 
 	const login = (username: string, password: string) => {
-		if (username === 'admin' && password === 'admin') {
-			setAuthState({
-				authenticated: true,
-				username: username,
-				role: Role.ADMIN
-			});
-		} else if (username === 'user' && password === 'user') {
-			setAuthState({
-				authenticated: true,
-				username: username,
-				role: Role.USER
-			});
-		} else {
-			alert('Invalid username or password!');
-		}
+		const auth = getAuth();
+		
+		signInWithEmailAndPassword(auth, username, password)
+			  .then(async (userCredential) => {
+				// Signed in
+				const user = userCredential.user;
+				alert('credenciales correctas!');
+				console.log(user.email);
+
+				setAuthState({
+					authenticated: true,
+					username: username,
+					role: Role.ADMIN
+				});
+
+			  })
+			  .catch((error) => {
+				alert('Error!');
+				const errorCode = error.code;
+				const errorMessage = error.message;
+		});
+		  
+
+		// if (username === 'admin' && password === 'admin') {
+		// 	setAuthState({
+		// 		authenticated: true,
+		// 		username: username,
+		// 		role: Role.ADMIN
+		// 	});
+		// } else if (username === 'user' && password === 'user') {
+		// 	setAuthState({
+		// 		authenticated: true,
+		// 		username: username,
+		// 		role: Role.USER
+		// 	});
+		// } else {
+		// 	alert('Invalid username or password!');
+		// }
 	};
 
 	const logout = async () => {
